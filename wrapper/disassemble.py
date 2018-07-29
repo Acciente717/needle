@@ -62,8 +62,8 @@ def disassembly_lines(binary_path):
     
     process_objdump = subprocess.Popen("objdump -d " + binary_path, 
                                        stdout=subprocess.PIPE, shell=True)
+    retval, _ = process_objdump.communicate()
     process_objdump.wait()
-    retval = process_objdump.stdout.read()
     lines = retval.decode("utf-8").split("\n")
     
     return lines
