@@ -3,8 +3,23 @@ import sys
 import wrapper.disassemble as disas
 import wrapper.slave as slave
 import queue
+from optparse import OptionParser
 
-binary_path = sys.argv[1]
+usage = "usage: %prog [options] binary_dir" 
+parser = OptionParser(usage=usage)
+parser.add_option("-t", "--thread", dest="threadnum",  
+                  help="designate thread number", metavar="THREAD",
+                  action="store", type="int", default=1)
+(options, args) = parser.parse_args()
+
+
+if len(args) != 1:
+    parser.print_help()
+    exit(1)
+threadnum = options.threadnum
+binary_path = args[0]
+
+
 try:
     bin_lst = os.listdir(binary_path)
 except FileNotFoundError:
@@ -20,6 +35,6 @@ for i in range(len(bin_lst)):
         if i != j:
             job_queue.put((i, j))
 
-res_lst = slave.multithread_bincmp(4, job_queue, disas_lst)
+res_lst = slave.multithread_bincmp(threadnum, job_queue, disas_lst)
 
 print(res_lst)
