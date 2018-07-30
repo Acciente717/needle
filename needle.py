@@ -36,5 +36,6 @@ for i in range(len(bin_lst)):
             job_queue.put((i, j))
 
 res_lst = slave.multithread_bincmp(threadnum, job_queue, disas_lst)
+res_lst.sort()
 
 print(res_lst)
