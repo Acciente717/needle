@@ -1,5 +1,5 @@
-./bincmp/bincmp: ./bincmp/bincmp.c
-	gcc -O2 -o ./bincmp/bincmp ./bincmp/bincmp.c
+./bincmp/bincmp: ./bincmp/bincmp.cpp
+	g++ -O2 -o ./bincmp/bincmp ./bincmp/bincmp.cpp
 
 clean:
 	rm ./bincmp/bincmp
