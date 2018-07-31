@@ -82,4 +82,3 @@ def filtered_disassembly(binary_path):
     res = generate_bincmp_input(functions)
     
     return res
-
