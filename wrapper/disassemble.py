@@ -24,7 +24,8 @@ def extract_functions(lines):
 
                 try:
                     instruction = line.split("\t")[2]
-                    function.append(instruction)
+                    opcode = instruction.split(" ")[0]
+                    function.append(opcode)
                 except IndexError:
                     pass
 
@@ -36,7 +37,7 @@ def extract_functions(lines):
             functions.append((func_name, function))
 
         idx += 1
-    
+
     return functions
 
 
@@ -53,7 +54,7 @@ def generate_bincmp_input(functions):
     for func_name, function in functions:
         s += "!begin_func " + func_name + "\n"
         s += "\n".join(function) + "\n"
-        s += "!end_func\n"
+        s += "~end_func\n"
     return s
 
 

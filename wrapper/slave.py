@@ -11,8 +11,7 @@ def worker(job_queue, res_lst, disas_lst):
             idx1, idx2 = job_queue.get_nowait()
             bin_name1, disas1 = disas_lst[idx1]
             bin_name2, disas2 = disas_lst[idx2]
-            bincmp_input = disas1 + "$\n" + disas2 + "$\n"
-            
+            bincmp_input = "10 0.5\n" + disas1 + "#\n" + disas2 + "#\n"
             bincmp_process = subprocess.Popen("./bincmp/bincmp", stdin=subprocess.PIPE,
                                              stdout=subprocess.PIPE)
             distance, _ = bincmp_process.communicate(bytes(bincmp_input, encoding="utf-8"))
