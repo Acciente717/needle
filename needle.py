@@ -1,11 +1,11 @@
 import os
-import sys
 import wrapper.disassemble as disas
 import wrapper.slave as slave
 import queue
 import pandas as pd
 from optparse import OptionParser
 
+# Build options and arguments parser.
 usage = "usage: %prog [options] binary_dir" 
 parser = OptionParser(usage=usage)
 parser.add_option("-t", "--thread", dest="threadnum",  
@@ -26,51 +26,85 @@ parser.add_option("-w", "--omega", dest="omega",
 (options, args) = parser.parse_args()
 
 
-if len(args) != 1:
-    parser.print_help()
-    exit(1)
+# Analyze options.
 threadnum = options.threadnum
-binary_path = args[0]
 params = {"alpha" : options.alpha,
           "beta" : options.beta,
           "omega" : options.omega}
 
+
+# Analyze arguments.
+if len(args) != 1:
+    parser.print_help()
+    exit(1)
+binary_path = args[0]
+
+
+# Check availability of output path.
 if options.output is not None:
-    opath, oname = os.path.split(options.output)
-    if not os.access(opath, os.F_OK):
-        print("Fatal error! Cannot open output file path!")
+    try:
+        os.mknod(options.output)
+    except FileNotFoundError:
+        print("Fatal error! Output file path does not exist!")
         exit(1)
-    if not os.access(opath, os.W_OK):
+    except PermissionError:
         print("Permission denied! Cannot open output file to write!")
         exit(1)
-    if not os.path.exists(options.output):
-        os.mknod(options.output)
-    else:
+    except FileExistsError:
+        if not os.path.isfile(options.output):
+            print("Fatal error! Output path does not point to a regular file.")
+            exit(1)
         if not os.access(options.output, os.W_OK):
             print("Permission denied! Cannot open output file to write!")
             exit(1)
+        print("Warning: output file exists!")
+        while True:
+            flag = input("Overwrite existing file? [y/n]: ")
+            if flag == "y":
+                break
+            elif flag == "n":
+                print("Operation abort!")
+                exit(1)
 
 
+# List binary files.
 try:
     bin_lst = os.listdir(binary_path)
 except FileNotFoundError:
-    print("Fatal error! Cannot open binary code directory!")
+    print("Fatal error! Binary file directory does not exist!")
+    exit(1)
+except PermissionError:
+    print("Permission denied! Cannot open binary code directory!")
+    exit(1)
+except NotADirectoryError:
+    print("Fatal error! \"" + binary_path + "\" is not a directory!")
     exit(1)
 
+
+# Disassemble binary files.
 disas_lst = [(binary, disas.filtered_disassembly(os.path.join(binary_path, binary)))
              for binary in bin_lst]
 
+
+# Create job queue.
 job_queue = queue.Queue()
 for i in range(len(bin_lst)):
     for j in range(len(bin_lst)):
         if i != j:
             job_queue.put((i, j))
 
+
+# Call bincmp kernel.
 res_lst = slave.multithread_bincmp(params, threadnum, job_queue, disas_lst)
+
+
+# Sort result by names of binary files.
 res_lst.sort()
 
+
+# Output results.
+csv = pd.Series(res_lst)
 if options.output is None:
-    print(res_lst)
+    print(csv)
 else:
-    csv = pd.Series(res_lst)
     csv.to_csv(options.output)

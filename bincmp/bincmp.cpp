@@ -130,10 +130,12 @@ bool SPFA()
     
     last = 1;
     res += MIN * dest[1];
+
     while(last != 0)
     {
         map[preffix[last]][last] -= MIN;
         map[last][preffix[last]] += MIN;
+        last = preffix[last];
     }
     
     return true;
@@ -151,8 +153,11 @@ int main()
         bool flag = SPFA();
         if(!flag) break;
     }
-    
-    printf("%lf\n", res);
+
+    int total = 0;
+    for(int i = 0; i < left.size(); i++) total += left[i].size();
+
+    printf("%lf\n", -res / total);
     
     return 0;
 }

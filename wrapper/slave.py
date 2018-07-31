@@ -16,11 +16,10 @@ def worker(params, job_queue, res_lst, disas_lst):
             bin_name1, disas1 = disas_lst[idx1]
             bin_name2, disas2 = disas_lst[idx2]
             bincmp_input = str(alpha) + " " + str(beta) + "\n" + disas1 + "#\n" + disas2 + "#\n"
-            print(bincmp_input)
-            exit(0)
             bincmp_process = subprocess.Popen("./bincmp/bincmp", stdin=subprocess.PIPE,
                                              stdout=subprocess.PIPE)
             distance, _ = bincmp_process.communicate(bytes(bincmp_input, encoding="utf-8"))
+            distance = float(distance)
             bincmp_process.wait()
             res_lst.append((bin_name1, bin_name2, distance))
             
