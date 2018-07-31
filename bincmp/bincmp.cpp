@@ -1,30 +1,30 @@
-#include <stdio.h>
-#include "vector"
-#include "cstring"
-#include "string"
-#include "queue"
-#include "cmath"
-
-#define LENTH 30
-#define MAX 200
-#define INF 1e9
-#define EPS 1e-8
-
+#include <cstdio>
+#include <vector>
+#include <cstring>
+#include <string>
+#include <queue>
+#include <cmath>
 using namespace std;
+
+static const int LENGTH = 30;
+static const int MAX = 200;
+static const double INF = 1e9;
+static const double EPS = 1e-8;
+
 
 int lf = 0, rf = 0, vertice = 0, map[MAX][MAX] = {};
 double argA = 0, argB = 0, res = 0, cost[MAX][MAX] = {};
 
-vector<vector<string>> left, right;
+vector< vector<string> > left, right;
 
 void read_in()
 {
-    char buffer[LENTH] = {};
+    char buffer[LENGTH] = {};
     scanf("%lf%lf", &argA, &argB);
     
     while(true)
     {
-        memset(buffer, 0, sizeof(char) * LENTH);
+        memset(buffer, 0, sizeof(char) * LENGTH);
         scanf("%s", buffer);
         
         if(buffer[0] == '#') break;
@@ -35,7 +35,7 @@ void read_in()
     
     while(true)
     {
-        memset(buffer, 0, sizeof(char) * LENTH);
+        memset(buffer, 0, sizeof(char) * LENGTH);
         scanf("%s", buffer);
         
         if(buffer[0] == '#') break;
@@ -78,10 +78,10 @@ void build()
     {
         for(int j = 0; j < rf; j++)
         {
-            int lenth = lcs(left[i], right[j]);
-            double weight = 1.0 / (1.0 + exp((-argA) * lenth / min(left[i].size(), right[j].size()) + argB));
+            int len = lcs(left[i], right[j]);
+            double weight = 1.0 / (1.0 + exp((-argA) * len / min(left[i].size(), right[j].size()) + argB));
             
-            map[i + 2][j + 2 + lf] = lenth;
+            map[i + 2][j + 2 + lf] = len;
             cost[i + 2][j + 2 + lf] = -weight, cost[j + 2 + lf][i + 2] = weight;
         }
     }
