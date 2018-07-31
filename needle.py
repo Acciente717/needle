@@ -14,6 +14,15 @@ parser.add_option("-t", "--thread", dest="threadnum",
 parser.add_option("-o", "--output", dest="output",
                  help="designate output file path", metavar="FILE",
                  action="store", type="string")
+parser.add_option("-a", "--alpha", dest="alpha",
+                  help="parameter alpha for bincmp", metavar="ALPHA",
+                  action="store", type="float", default=10.0)
+parser.add_option("-b", "--beta", dest="beta",
+                  help="parameter beta for bincmp", metavar="BETA",
+                  action="store", type="float", default=0.5)
+parser.add_option("-w", "--omega", dest="omega",
+                  help="parameter omega for bincmp", metavar="OMEGA",
+                  action="store", type="int", default=-1)
 (options, args) = parser.parse_args()
 
 
@@ -22,6 +31,9 @@ if len(args) != 1:
     exit(1)
 threadnum = options.threadnum
 binary_path = args[0]
+params = {"alpha" : options.alpha,
+          "beta" : options.beta,
+          "omega" : options.omega}
 
 if options.output is not None:
     opath, oname = os.path.split(options.output)
@@ -54,7 +66,7 @@ for i in range(len(bin_lst)):
         if i != j:
             job_queue.put((i, j))
 
-res_lst = slave.multithread_bincmp(threadnum, job_queue, disas_lst)
+res_lst = slave.multithread_bincmp(params, threadnum, job_queue, disas_lst)
 res_lst.sort()
 
 if options.output is None:
