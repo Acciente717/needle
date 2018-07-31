@@ -12,17 +12,17 @@ parser.add_option("-t", "--thread", dest="threadnum",
                   help="designate thread number", metavar="THREAD",
                   action="store", type="int", default=1)
 parser.add_option("-o", "--output", dest="output",
-                 help="designate output file path", metavar="FILE",
-                 action="store", type="string")
+                 help="designate output file path [default: stdout]"
+                 , metavar="FILE", action="store", type="string")
 parser.add_option("-a", "--alpha", dest="alpha",
-                  help="parameter alpha for bincmp", metavar="ALPHA",
-                  action="store", type="float", default=10.0)
+                  help="parameter alpha for bincmp [default: 10.0]"
+                  , metavar="ALPHA", action="store", type="float", default=10.0)
 parser.add_option("-b", "--beta", dest="beta",
-                  help="parameter beta for bincmp", metavar="BETA",
-                  action="store", type="float", default=0.5)
+                  help="parameter beta for bincmp [default: 0.5]"
+                  , metavar="BETA", action="store", type="float", default=0.5)
 parser.add_option("-w", "--omega", dest="omega",
-                  help="parameter omega for bincmp", metavar="OMEGA",
-                  action="store", type="int", default=-1)
+                  help="parameter omega for bincmp [default: -1]"
+                  , metavar="OMEGA", action="store", type="int", default=-1)
 (options, args) = parser.parse_args()
 
 
