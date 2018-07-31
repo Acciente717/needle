@@ -6,7 +6,7 @@ import pandas as pd
 from optparse import OptionParser
 
 # Build options and arguments parser.
-usage = "usage: %prog [options] binary_dir" 
+usage = "Usage: python %prog [options] binary_dir" 
 parser = OptionParser(usage=usage)
 parser.add_option("-t", "--thread", dest="threadnum",  
                   help="designate thread number", metavar="THREAD",
