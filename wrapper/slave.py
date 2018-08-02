@@ -3,7 +3,7 @@ import queue
 import subprocess
 
 
-def worker(params, job_queue, res_lst, disas_lst):
+def __worker(params, job_queue, res_lst, disas_lst):
     """Worker in thread pool."""
 
     alpha = params["alpha"]
@@ -35,7 +35,7 @@ def multithread_bincmp(params, thread_num, job_queue, disas_lst):
     res_lst = []
     thread_pool = []
     for i in range(thread_num):
-        thread = threading.Thread(target=worker, args=(params, job_queue, res_lst, disas_lst))
+        thread = threading.Thread(target=__worker, args=(params, job_queue, res_lst, disas_lst))
         thread.start()
         thread_pool.append(thread)
     for thread in thread_pool:

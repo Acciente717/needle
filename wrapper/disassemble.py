@@ -1,6 +1,6 @@
 import subprocess
 
-def extract_functions(lines):
+def __extract_functions(lines):
     """Extract functions from raw disassembly text."""
     
     line_num = len(lines)
@@ -41,13 +41,13 @@ def extract_functions(lines):
     return functions
 
 
-def filter_functions(functions):
+def __filter_functions(functions):
     """Filter out library functions."""
 
     return functions
 
 
-def generate_bincmp_input(functions):
+def __generate_bincmp_input(functions):
     """Generate input stream for bincmp."""
 
     s = ""
@@ -58,7 +58,7 @@ def generate_bincmp_input(functions):
     return s
 
 
-def disassembly_lines(binary_path):
+def __disassembly_lines(binary_path):
     """Use subprocess call of objdump to disassembly binary code."""
     
     process_objdump = subprocess.Popen("objdump -d " + binary_path, 
@@ -76,9 +76,9 @@ def filtered_disassembly(binary_path):
     filtered out.
     """
     
-    lines = disassembly_lines(binary_path)
-    functions = extract_functions(lines)
-    functions = filter_functions(functions)
-    res = generate_bincmp_input(functions)
+    lines = __disassembly_lines(binary_path)
+    functions = __extract_functions(lines)
+    functions = __filter_functions(functions)
+    res = __generate_bincmp_input(functions)
     
     return res
