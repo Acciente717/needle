@@ -7,7 +7,8 @@
 using namespace std;
 
 static const int LENGTH = 30;
-static const int MAX = 200;
+static const int MAX = 400;
+static const int INSTRUCT = 5000;
 static const double INF = 1e9;
 static const double EPS = 1e-8;
 
@@ -50,10 +51,10 @@ void read_in()
 
 int lcs(vector<string> &A, vector<string> &B)
 {
-    static int dp[2][MAX] = {};
+    static int dp[2][INSTRUCT] = {};
     
     int ptr = 0, lsize = (int)A.size(), rsize = (int)B.size();
-    memset(dp[0], 0, sizeof(dp[0]));
+    memset(dp[0], 0, sizeof(int) * (max(lsize, rsize) + 2));
     
     for(int i = 0; i < lsize; i++)
     {
@@ -130,7 +131,7 @@ bool SPFA()
     
     last = 1;
     res += MIN * dest[1];
-
+    
     while(last != 0)
     {
         map[preffix[last]][last] -= MIN;
@@ -153,10 +154,10 @@ int main()
         bool flag = SPFA();
         if(!flag) break;
     }
-
+    
     int total = 0;
     for(int i = 0; i < left.size(); i++) total += left[i].size();
-
+    
     printf("%lf\n", -res / total);
     
     return 0;
