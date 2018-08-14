@@ -6,15 +6,19 @@
 #include <cmath>
 using namespace std;
 
-static const int LENGTH = 30;
+static const int LENGTH = 100;
 //static const int MAX = 400;
-static const int INSTRUCT = 5000;
+static const int INSTRUCT = 200000;
 static const double INF = 1e9;
 static const double EPS = 1e-8;
 
 
 int lf = 0, rf = 0, vertice = 0, **map = NULL;
 double argA = 0, argB = 0, res = 0, **cost = NULL;
+
+double *dest = NULL;
+bool *used = NULL;
+int *preffix = NULL;
 
 vector< vector<string> > left, right;
 
@@ -32,6 +36,7 @@ void read_in()
         else if(buffer[0] == '!') left.push_back(vector<string>());
         else if(buffer[0] == '~') continue;
         else left.back().push_back(string(buffer));
+        
     }
     
     while(true)
@@ -47,15 +52,20 @@ void read_in()
     
     lf = (int) left.size(), rf = (int) right.size();
     vertice = lf + rf + 5;
+    printf("%d\n", vertice);
     
     int *_map = new int[vertice * vertice];
     map = new int *[vertice];
-    for(int i = 0; i < vertice; i++) map[i] = _map + i * vertice;
+    for(int i = 0; i < vertice; i++) map[i] = &_map[i * vertice];
     
     double * _cost = new double[vertice * vertice];
     cost = new double *[vertice];
-    for(int i = 0; i < vertice; i++) cost[i] = _cost + i * vertice;
+    for(int i = 0; i < vertice; i++) cost[i] = &_cost[i * vertice];
     
+    dest = new double[vertice];
+    used = new bool[vertice];
+    preffix = new int[vertice];
+
     
 }
 
@@ -98,14 +108,11 @@ void build()
     }
 }
 
-bool SPFA(int MAX)
+bool SPFA()
 {
-    double *dest = new double[MAX];
-    bool *used = new bool[MAX];
-    int *preffix = new int[MAX];
     
-    memset(used, 0, sizeof(double) * MAX);
-    memset(preffix, -1, sizeof(int) * MAX);
+    memset(used, 0, sizeof(double) * vertice);
+    memset(preffix, -1, sizeof(int) * vertice);
     for(int i = 0; i < vertice; i++) dest[i] = INF;
     dest[0] = 0;
     
@@ -141,6 +148,7 @@ bool SPFA(int MAX)
     
     last = 1;
     res += MIN * dest[1];
+    printf("res : %lf\n", res);
     
     while(last != 0)
     {
@@ -160,7 +168,7 @@ int main()
     
     while(true)
     {
-        bool flag = SPFA(vertice);
+        bool flag = SPFA();
         if(!flag) break;
     }
     
