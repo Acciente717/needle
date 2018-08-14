@@ -7,14 +7,14 @@
 using namespace std;
 
 static const int LENGTH = 30;
-static const int MAX = 400;
+//static const int MAX = 400;
 static const int INSTRUCT = 5000;
 static const double INF = 1e9;
 static const double EPS = 1e-8;
 
 
-int lf = 0, rf = 0, vertice = 0, map[MAX][MAX] = {};
-double argA = 0, argB = 0, res = 0, cost[MAX][MAX] = {};
+int lf = 0, rf = 0, vertice = 0, **map = NULL;
+double argA = 0, argB = 0, res = 0, **cost = NULL;
 
 vector< vector<string> > left, right;
 
@@ -46,7 +46,17 @@ void read_in()
     }
     
     lf = (int) left.size(), rf = (int) right.size();
-    vertice = lf + rf + 2;
+    vertice = lf + rf + 5;
+    
+    int *_map = new int[vertice * vertice];
+    map = new int *[vertice];
+    for(int i = 0; i < vertice; i++) map[i] = _map + i * vertice;
+    
+    double * _cost = new double[vertice * vertice];
+    cost = new double *[vertice];
+    for(int i = 0; i < vertice; i++) cost[i] = _cost + i * vertice;
+    
+    
 }
 
 int lcs(vector<string> &A, vector<string> &B)
@@ -88,14 +98,14 @@ void build()
     }
 }
 
-bool SPFA()
+bool SPFA(int MAX)
 {
-    static double dest[MAX] = {};
-    static bool used[MAX] = {};
-    static int preffix[MAX] = {};
+    double *dest = new double[MAX];
+    bool *used = new bool[MAX];
+    int *preffix = new int[MAX];
     
-    memset(used, 0, sizeof(used));
-    memset(preffix, -1, sizeof(preffix));
+    memset(used, 0, sizeof(double) * MAX);
+    memset(preffix, -1, sizeof(int) * MAX);
     for(int i = 0; i < vertice; i++) dest[i] = INF;
     dest[0] = 0;
     
@@ -146,12 +156,11 @@ bool SPFA()
 int main()
 {
     read_in();
-    if(vertice >= MAX) return -1;
     build();
     
     while(true)
     {
-        bool flag = SPFA();
+        bool flag = SPFA(vertice);
         if(!flag) break;
     }
     
