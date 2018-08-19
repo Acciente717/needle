@@ -7,20 +7,19 @@
 using namespace std;
 
 static const int LENGTH = 100;
-//static const int MAX = 400;
 static const int INSTRUCT = 200000;
 static const double INF = 1e9;
 static const double EPS = 1e-8;
 
 
-int lf = 0, rf = 0, vertice = 0, **map = NULL;
-double argA = 0, argB = 0, res = 0, **cost = NULL;
+static int lf = 0, rf = 0, vertice = 0, **map = NULL, *_map = NULL;
+static double argA = 0, argB = 0, res = 0, **cost = NULL, *_cost = NULL;
 
-double *dest = NULL;
-bool *used = NULL;
-int *preffix = NULL;
+static double *dest = NULL;
+static bool *used = NULL;
+static int *preffix = NULL;
 
-vector< vector<string> > left, right;
+static vector< vector<string> > left, right;
 
 void read_in()
 {
@@ -29,8 +28,8 @@ void read_in()
     
     while(true)
     {
-        memset(buffer, 0, sizeof(char) * LENGTH);
         scanf("%s", buffer);
+//        printf("%s\n", buffer);
         
         if(buffer[0] == '#') break;
         else if(buffer[0] == '!') left.push_back(vector<string>());
@@ -41,7 +40,6 @@ void read_in()
     
     while(true)
     {
-        memset(buffer, 0, sizeof(char) * LENGTH);
         scanf("%s", buffer);
         
         if(buffer[0] == '#') break;
@@ -52,13 +50,17 @@ void read_in()
     
     lf = (int) left.size(), rf = (int) right.size();
     vertice = lf + rf + 5;
-    printf("%d\n", vertice);
+//    printf("%d\n", vertice);
     
-    int *_map = new int[vertice * vertice];
+    _map = new int[vertice * vertice];
+    
+    memset(_map, 0, sizeof(int) * vertice * vertice);
     map = new int *[vertice];
     for(int i = 0; i < vertice; i++) map[i] = &_map[i * vertice];
     
-    double * _cost = new double[vertice * vertice];
+    _cost = new double[vertice * vertice];
+    
+    memset(_cost, 0, sizeof(double) * vertice * vertice);
     cost = new double *[vertice];
     for(int i = 0; i < vertice; i++) cost[i] = &_cost[i * vertice];
     
@@ -74,7 +76,7 @@ int lcs(vector<string> &A, vector<string> &B)
     static int dp[2][INSTRUCT] = {};
     
     int ptr = 0, lsize = (int)A.size(), rsize = (int)B.size();
-    memset(dp[0], 0, sizeof(int) * (max(lsize, rsize) + 2));
+    memset(dp[0], 0, sizeof(dp[0]));
     
     for(int i = 0; i < lsize; i++)
     {
@@ -110,10 +112,12 @@ void build()
 
 bool SPFA()
 {
-    
-    memset(used, 0, sizeof(double) * vertice);
-    memset(preffix, -1, sizeof(int) * vertice);
-    for(int i = 0; i < vertice; i++) dest[i] = INF;
+    for(int i = 0; i < vertice; i++)
+    {
+        dest[i] = INF;
+        used[i] = false;
+        preffix[i] = -1;
+    }
     dest[0] = 0;
     
     queue<int> test;
@@ -148,7 +152,7 @@ bool SPFA()
     
     last = 1;
     res += MIN * dest[1];
-    printf("res : %lf\n", res);
+//    printf("res : %lf\n", res);
     
     while(last != 0)
     {
@@ -160,9 +164,21 @@ bool SPFA()
     return true;
 }
 
+void destroy()
+{
+    delete[] map;
+    delete[] _map;
+    delete[] cost;
+    delete[] _cost;
+    delete[] dest;
+    delete[] used;
+    delete[] preffix;
+    
+}
 
 int main()
 {
+//    freopen("/Users/chentianyu/Documents/ICS/needle-master/test_data", "r", stdin);
     read_in();
     build();
     
@@ -176,6 +192,7 @@ int main()
     for(int i = 0; i < left.size(); i++) total += left[i].size();
     
     printf("%lf\n", -res / total);
+    destroy();
     
     return 0;
 }
