@@ -1,82 +1,79 @@
-#include <cstdio>
+#include <iostream>
 #include <vector>
-#include <cstring>
 #include <string>
 #include <queue>
 #include <cmath>
 using namespace std;
 
-static const int LENGTH = 100;
-static const int INSTRUCT = 200000;
 static const double INF = 1e9;
 static const double EPS = 1e-8;
 
+static int lf = 0, rf = 0, vertice = 0;
+static double argA = 0, argB = 0, res = 0;
 
-static int lf = 0, rf = 0, vertice = 0, **map = NULL, *_map = NULL;
-static double argA = 0, argB = 0, res = 0, **cost = NULL, *_cost = NULL;
+static vector<int> _map;
+static vector<decltype(_map.begin())> map;
+static vector<double> _cost;
+static vector<decltype(_cost.begin())> cost;
 
-static double *dest = NULL;
-static bool *used = NULL;
-static int *preffix = NULL;
+static vector<double> dest;
+static vector<bool> used;
+static vector<int> preffix; 
 
-static vector< vector<string> > left, right;
+static vector< vector<string> > leftvec, rightvec;
 
 void read_in()
 {
-    char buffer[LENGTH] = {};
-    scanf("%lf%lf", &argA, &argB);
+    string buffer;
+    cin >> argA >> argB;
     
     while(true)
     {
-        scanf("%s", buffer);
-//        printf("%s\n", buffer);
+        cin >> buffer;
         
         if(buffer[0] == '#') break;
-        else if(buffer[0] == '!') left.push_back(vector<string>());
+        else if(buffer[0] == '!') leftvec.push_back(vector<string>());
         else if(buffer[0] == '~') continue;
-        else left.back().push_back(string(buffer));
+        else leftvec.back().push_back(buffer);
         
     }
     
     while(true)
     {
-        scanf("%s", buffer);
+        cin >> buffer;
         
         if(buffer[0] == '#') break;
-        else if(buffer[0] == '!') right.push_back(vector<string>());
+        else if(buffer[0] == '!') rightvec.push_back(vector<string>());
         else if(buffer[0] == '~') continue;
-        else right.back().push_back(string(buffer));
+        else rightvec.back().push_back(buffer);
     }
     
-    lf = (int) left.size(), rf = (int) right.size();
+    lf = static_cast<int>(leftvec.size()), rf = static_cast<int>(rightvec.size());
     vertice = lf + rf + 5;
-//    printf("%d\n", vertice);
     
-    _map = new int[vertice * vertice];
+    _map.resize(vertice * vertice);
+    fill(_map.begin(), _map.end(), 0);
+    map.resize(vertice);
+    for(int i = 0; i < vertice; i++) map[i] = _map.begin() + (i * vertice);
     
-    memset(_map, 0, sizeof(int) * vertice * vertice);
-    map = new int *[vertice];
-    for(int i = 0; i < vertice; i++) map[i] = &_map[i * vertice];
-    
-    _cost = new double[vertice * vertice];
-    
-    memset(_cost, 0, sizeof(double) * vertice * vertice);
-    cost = new double *[vertice];
-    for(int i = 0; i < vertice; i++) cost[i] = &_cost[i * vertice];
-    
-    dest = new double[vertice];
-    used = new bool[vertice];
-    preffix = new int[vertice];
+    _cost.resize(vertice * vertice);
+    fill(_cost.begin(), _cost.end(), 0);
+    cost.resize(vertice);
+    for(int i = 0; i < vertice; i++) cost[i] = _cost.begin() + (i * vertice);
 
-    
+    dest.resize(vertice);
+    used.resize(vertice);
+    preffix.resize(vertice);
 }
 
 int lcs(vector<string> &A, vector<string> &B)
 {
-    static int dp[2][INSTRUCT] = {};
+    static vector<int> dp[2];
     
-    int ptr = 0, lsize = (int)A.size(), rsize = (int)B.size();
-    memset(dp[0], 0, sizeof(dp[0]));
+    int ptr = 0, lsize = static_cast<int>(A.size()), rsize = static_cast<int>(B.size());
+    if (rsize >= dp[0].size())
+        dp[0].resize(rsize + 1), dp[1].resize(rsize + 1);
+    fill(dp[0].begin(), dp[0].end(), 0);
     
     for(int i = 0; i < lsize; i++)
     {
@@ -94,15 +91,17 @@ int lcs(vector<string> &A, vector<string> &B)
 
 void build()
 {
-    for(int i = 0; i < lf; i++) map[0][i + 2] = (int)left[i].size(), cost[0][i + 2] = 0;
-    for(int i = 0; i < rf; i++) map[i + 2 + lf][1] = (int)right[i].size(), cost[i + 2 + lf][1] = 0;
+    for(int i = 0; i < lf; i++)
+        map[0][i + 2] = static_cast<int>(leftvec[i].size()), cost[0][i + 2] = 0;
+    for(int i = 0; i < rf; i++)
+        map[i + 2 + lf][1] = static_cast<int>(rightvec[i].size()), cost[i + 2 + lf][1] = 0;
     
     for(int i = 0; i < lf; i++)
     {
         for(int j = 0; j < rf; j++)
         {
-            int len = lcs(left[i], right[j]);
-            double weight = 1.0 / (1.0 + exp((-argA) * len / min(left[i].size(), right[j].size()) + argB));
+            int len = lcs(leftvec[i], rightvec[j]);
+            double weight = 1.0 / (1.0 + exp((-argA) * len / min(leftvec[i].size(), rightvec[j].size()) + argB));
             
             map[i + 2][j + 2 + lf] = len;
             cost[i + 2][j + 2 + lf] = -weight, cost[j + 2 + lf][i + 2] = weight;
@@ -152,7 +151,6 @@ bool SPFA()
     
     last = 1;
     res += MIN * dest[1];
-//    printf("res : %lf\n", res);
     
     while(last != 0)
     {
@@ -164,21 +162,8 @@ bool SPFA()
     return true;
 }
 
-void destroy()
-{
-    delete[] map;
-    delete[] _map;
-    delete[] cost;
-    delete[] _cost;
-    delete[] dest;
-    delete[] used;
-    delete[] preffix;
-    
-}
-
 int main()
 {
-//    freopen("/Users/chentianyu/Documents/ICS/needle-master/test_data", "r", stdin);
     read_in();
     build();
     
@@ -189,10 +174,9 @@ int main()
     }
     
     int total = 0;
-    for(int i = 0; i < left.size(); i++) total += left[i].size();
+    for(int i = 0; i < leftvec.size(); i++) total += leftvec[i].size();
     
-    printf("%lf\n", -res / total);
-    destroy();
+    cout << (-res / total) << endl;
     
     return 0;
 }
