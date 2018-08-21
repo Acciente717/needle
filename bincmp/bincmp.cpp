@@ -22,7 +22,7 @@ static vector<int> preffix;
 
 static vector< vector<string> > leftvec, rightvec;
 
-void read_in()
+static void read_in()
 {
     string buffer;
     cin >> argA >> argB;
@@ -66,7 +66,7 @@ void read_in()
     preffix.resize(vertice);
 }
 
-int lcs(vector<string> &A, vector<string> &B)
+static int lcs(vector<string> &A, vector<string> &B)
 {
     static vector<int> dp[2];
     
@@ -89,7 +89,7 @@ int lcs(vector<string> &A, vector<string> &B)
     return dp[ptr][rsize];
 }
 
-void build()
+static void build()
 {
     for(int i = 0; i < lf; i++)
         map[0][i + 2] = static_cast<int>(leftvec[i].size()), cost[0][i + 2] = 0;
@@ -109,7 +109,7 @@ void build()
     }
 }
 
-bool SPFA()
+static bool SPFA()
 {
     for(int i = 0; i < vertice; i++)
     {
